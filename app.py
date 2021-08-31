@@ -1,5 +1,5 @@
 from rich.progress import track
-from record_info import record_map
+from record_maps import record_maps
 import configparser
 import psycopg2
 
@@ -9,26 +9,23 @@ class Configs:
         config = configparser.ConfigParser()
         config.read(config_file)
 
-        self.file = config["cifp_file"]["file_loc"]
-
         self.dbname = config["postgres"]["dbname"]
         self.user = config["postgres"]["user"]
         self.password = config["postgres"]["password"]
         self.host = config["postgres"]["host"]
         self.port = config["postgres"]["port"]
+        self.file = config["cifp_file"]["file_loc"]
 
 
-class PgConn:
-    def __init__(self, configs: Configs):
-        config = configparser.ConfigParser()
-        config.read("config.ini")
+class PgConn(Configs):
+    def connect(self):
 
         self.conn = psycopg2.connect(
-            dbname=configs.dbname,
-            user=configs.user,
-            password=configs.password,
-            host=configs.host,
-            port=configs.port,
+            dbname=self.dbname,
+            user=self.user,
+            password=self.password,
+            host=self.host,
+            port=self.port,
         )
 
         self.cur = self.conn.cursor()
@@ -51,55 +48,60 @@ class PgConn:
         values = [v.replace("'", "''") for v in values]
         values_joined = ", ".join([f"'{v}'" for v in values])
         sql = f"INSERT INTO cycle{cycle}.{name} VALUES ({values_joined});"
-
         self.cur.execute(sql)
 
 
-class ArincParser:
-    def __init__(self, configs: Configs, conn: PgConn):
+class ArincParser(PgConn):
+    def parse(self):    # function sould probably be renamed.
+        self.connect()
 
-        with open(configs.file) as file:
+        self.cycle = self.get_cycle()
+        self.create_schema(self.cycle)
+
+    def create_arinc_record(self, record_map):
+        record = ArincRecord(record_map)
+
+        self.create_table(record.name, record.column_names, self.cycle)
+
+        for line in track(self.lines, description=f"{record.name.rjust(23)}"):
+            if (
+                line[record.section_pos] == record.section
+                and line[record.subsection_pos] == record.subsection
+                and line[record.cont_rec_pos] == record.cont_rec_val
+            ):
+                row = [f"{line[i['start']:i['end']]}" for i in record.columns]
+                self.add_row(record.name, row, self.cycle)
+
+    def get_cycle(self):
+        with open(self.file) as file:
             self.lines = file.readlines()
+        cycle = self.lines[0][35:39]
+        return cycle
 
-        self.cycle = self.lines[0][35:39]
 
-        self.conn = conn
+class ArincRecord:
+    def __init__(self, record_map: dict):
+        self.section = record_map.get("section_code")
+        self.subsection = record_map.get("subsection_code")
+        self.section_pos = record_map.get("section_pos")
+        self.subsection_pos = record_map.get("subsection_pos")
+        self.cont_rec_pos = record_map.get("cont_rec_pos")
+        self.cont_rec_val = str(record_map.get("cont_rec_val"))
 
-    def parse(self):
-        self.conn.create_schema(self.cycle)
-
-        for record in record_map:
-
-            record_name = record.get("name")
-            columns = [c["name"] for c in record["columns"]]
-
-            self.conn.create_table(record_name, columns, self.cycle)
-
-            section = record.get("section_code")
-            subsection = record.get("subsection_code")
-            section_pos = record.get("section_pos")
-            subsection_pos = record.get("subsection_pos")
-            cont_rec_pos = record.get("cont_rec_pos")
-            cont_rec_val = str(record.get("cont_rec_val"))
-
-            for line in track(self.lines, description=f"{record_name.rjust(23)}"):
-                if (
-                    line[section_pos] == section
-                    and line[subsection_pos] == subsection
-                    and line[cont_rec_pos] == cont_rec_val
-                ):
-                    row = [f"{line[i['start']:i['end']]}" for i in record["columns"]]
-                    self.conn.add_row(record_name, row, self.cycle)
+        self.name = record_map.get("name")
+        self.columns = record_map.get("columns")
+        self.column_names = [c["name"] for c in record_map["columns"]]
 
 
 def main():
-    configs = Configs()
-    pg_conn = PgConn(configs)
-    parser = ArincParser(configs, pg_conn)
+    parser = ArincParser()
 
     parser.parse()
 
-    pg_conn.commit_and_close()
+    for record in record_maps:
+        parser.create_arinc_record(record)
+
+    parser.commit_and_close()
 
 
 if __name__ == "__main__":

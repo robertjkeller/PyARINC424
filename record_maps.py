@@ -1,6 +1,6 @@
 # Store of mappings of each ARINC-424 record in FAA CIFP output.
 
-record_map = [
+record_maps = [
     {
         "name": "airport",
         "section_code": "P",
