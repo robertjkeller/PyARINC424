@@ -52,10 +52,13 @@ class PgConn(Configs):
 
 
 class ArincParser(PgConn):
-    def parse(self):    # function sould probably be renamed.
+    def parse(self):    # method sould probably be renamed.
         self.connect()
 
-        self.cycle = self.get_cycle()
+        with open(self.file) as file:
+            self.lines = file.readlines()
+
+        self.cycle = self.lines[0][35:39]
         self.create_schema(self.cycle)
 
     def create_arinc_record(self, record_map):
@@ -71,12 +74,6 @@ class ArincParser(PgConn):
             ):
                 row = [f"{line[i['start']:i['end']]}" for i in record.columns]
                 self.add_row(record.name, row, self.cycle)
-
-    def get_cycle(self):
-        with open(self.file) as file:
-            self.lines = file.readlines()
-        cycle = self.lines[0][35:39]
-        return cycle
 
 
 class ArincRecord:
