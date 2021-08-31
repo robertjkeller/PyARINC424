@@ -2,7 +2,7 @@ from rich.progress import track
 from record_info import record_map
 import configparser
 import psycopg2
-# test
+
 
 class Configs:
     def __init__(self, config_file="config.ini"):
