@@ -46,7 +46,7 @@ class PgConn(Configs):
 
     def add_row(self, name: str, values: list, cycle: str) -> None:
         values = [v.replace("'", "''") for v in values]
-        values_joined = ", ".join([f"'{v}'" for v in values])
+        values_joined = ", ".join([f"'{v.rstrip()}'" for v in values])
         sql = f"INSERT INTO cycle{cycle}.{name} VALUES ({values_joined});"
         self.cur.execute(sql)
 
