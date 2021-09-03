@@ -70,7 +70,7 @@ class ArincParser(PgConn):
             if (
                 line[record.section_pos] == record.section
                 and line[record.subsection_pos] == record.subsection
-                and line[record.cont_rec_pos] == record.cont_rec_val
+                and line[record.cont_rec_pos] in record.cont_rec_vals
             ):
                 row = [f"{line[i['start']:i['end']]}" for i in record.columns]
                 self.add_row(record.name, row, self.cycle)
@@ -83,7 +83,7 @@ class ArincRecord:
         self.section_pos = record_map.get("section_pos")
         self.subsection_pos = record_map.get("subsection_pos")
         self.cont_rec_pos = record_map.get("cont_rec_pos")
-        self.cont_rec_val = str(record_map.get("cont_rec_val"))
+        self.cont_rec_vals = str(record_map.get("cont_rec_vals"))
 
         self.name = record_map.get("name")
         self.columns = record_map.get("columns")
