@@ -67,7 +67,7 @@ class PgConn(Configs):
 
 
 class ArincParser(PgConn):
-    def parse(self):    # method sould probably be renamed.
+    def initialize(self): 
         self.connect()
 
         with open(self.file) as file:
@@ -86,7 +86,10 @@ class ArincParser(PgConn):
                 line[record.section_pos] == record.section
                 and line[record.subsection_pos] == record.subsection
             ):
-                if not record.cont_rec_pos or line[record.cont_rec_pos] in record.cont_rec_vals:
+                if (
+                    not record.cont_rec_pos
+                    or line[record.cont_rec_pos] in record.cont_rec_vals
+                ):
                     row = [f"{line[i['start']:i['end']]}" for i in record.columns]
                     self.add_row(record.name, row, self.cycle)
 
@@ -94,7 +97,7 @@ class ArincParser(PgConn):
 def main():
     parser = ArincParser()
 
-    parser.parse()
+    parser.initialize()
 
     for record in record_maps:
         parser.create_arinc_record(record)
