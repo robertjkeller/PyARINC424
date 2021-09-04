@@ -4,6 +4,20 @@ import configparser
 import psycopg2
 
 
+class ArincRecord:
+    def __init__(self, record_map: dict):
+        self.section = record_map.get("section_code")
+        self.subsection = record_map.get("subsection_code")
+        self.section_pos = record_map.get("section_pos")
+        self.subsection_pos = record_map.get("subsection_pos")
+        self.cont_rec_pos = record_map.get("cont_rec_pos")
+        self.cont_rec_vals = record_map.get("cont_rec_vals")
+
+        self.name = record_map.get("name")
+        self.columns = record_map.get("columns")
+        self.column_names = [c["name"] for c in record_map["columns"]]
+
+
 class Configs:
     def __init__(self, config_file="config.ini"):
         config = configparser.ConfigParser()
@@ -39,9 +53,10 @@ class PgConn(Configs):
         sql = f"DROP SCHEMA IF EXISTS cycle{cycle} CASCADE; CREATE SCHEMA cycle{cycle};"
         self.cur.execute(sql)
 
-    def create_table(self, name: str, columns: list, cycle: str) -> None:
-        sql = f"""DROP TABLE IF EXISTS cycle{cycle}.{name}; 
-                CREATE TABLE cycle{cycle}.{name} ({' varchar, '.join([c for c in columns])} varchar);"""
+    def create_table(self, record: ArincRecord, cycle: str) -> None:
+        sql = f"""DROP TABLE IF EXISTS cycle{cycle}.{record.name}; 
+                CREATE TABLE cycle{cycle}.{record.name} 
+                ({' varchar, '.join([c for c in record.column_names])} varchar);"""
         self.cur.execute(sql)
 
     def add_row(self, name: str, values: list, cycle: str) -> None:
@@ -64,30 +79,16 @@ class ArincParser(PgConn):
     def create_arinc_record(self, record_map):
         record = ArincRecord(record_map)
 
-        self.create_table(record.name, record.column_names, self.cycle)
+        self.create_table(record, self.cycle)
 
-        for line in track(self.lines, description=f"{record.name.rjust(23)}"):
+        for line in track(self.lines, description=f"{record.name.rjust(26)}"):
             if (
                 line[record.section_pos] == record.section
                 and line[record.subsection_pos] == record.subsection
-                and line[record.cont_rec_pos] in record.cont_rec_vals
             ):
-                row = [f"{line[i['start']:i['end']]}" for i in record.columns]
-                self.add_row(record.name, row, self.cycle)
-
-
-class ArincRecord:
-    def __init__(self, record_map: dict):
-        self.section = record_map.get("section_code")
-        self.subsection = record_map.get("subsection_code")
-        self.section_pos = record_map.get("section_pos")
-        self.subsection_pos = record_map.get("subsection_pos")
-        self.cont_rec_pos = record_map.get("cont_rec_pos")
-        self.cont_rec_vals = str(record_map.get("cont_rec_vals"))
-
-        self.name = record_map.get("name")
-        self.columns = record_map.get("columns")
-        self.column_names = [c["name"] for c in record_map["columns"]]
+                if not record.cont_rec_pos or line[record.cont_rec_pos] in record.cont_rec_vals:
+                    row = [f"{line[i['start']:i['end']]}" for i in record.columns]
+                    self.add_row(record.name, row, self.cycle)
 
 
 def main():
