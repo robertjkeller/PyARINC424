@@ -5,6 +5,7 @@ import psycopg2
 
 
 class ArincRecord:
+    '''Represents an ARINC-424 format file record.'''
     def __init__(self, record_map: dict):
         self.section = record_map.get("section_code")
         self.subsection = record_map.get("subsection_code")
@@ -18,10 +19,10 @@ class ArincRecord:
 
 
 class Configs:
+    '''User config settings from config file.'''
     def __init__(self, config_file="config.ini"):
         config = configparser.ConfigParser()
         config.read(config_file)
-
         self.dbname = config["postgres"]["dbname"]
         self.user = config["postgres"]["user"]
         self.password = config["postgres"]["password"]
@@ -30,9 +31,20 @@ class Configs:
         self.file = config["cifp_file"]["file_loc"]
 
 
-class PgConn(Configs):
-    def connect(self):
+class ArincParser(Configs):
+    '''
+    Parser that iterates through record mappings, extracts each record's
+    data from the main ARINC-format file, and adds the data to the 
+    PostgreSQL database.
+    '''
+    def __init__(self):
+        super().__init__()
+        self.connect()
+        self.lines = self.read_file()
+        self.cycle = self.get_cycle()
 
+    def connect(self):
+        '''Establishes connection to PostgreSQL database.'''
         self.conn = psycopg2.connect(
             dbname=self.dbname,
             user=self.user,
@@ -40,8 +52,16 @@ class PgConn(Configs):
             host=self.host,
             port=self.port,
         )
-
         self.cur = self.conn.cursor()
+
+    def read_file(self):
+        '''Reads the CIFP/ARINC-424 formatted file.'''
+        with open(self.file) as file:
+            return file.readlines()
+
+    def get_cycle(self):
+        '''Gets the file's AIRAC cycle for schema naming.'''
+        return self.lines[0][35:39]
 
     def commit_and_close(self):
         '''Commits changes and closes PostgreSQL connection.'''
@@ -49,9 +69,9 @@ class PgConn(Configs):
         self.cur.close()
         self.conn.close()
 
-    def create_schema(self, cycle: str) -> None:
+    def create_schema(self) -> None:
         '''Creates database schema for the given cycle. Drops existing schema.'''
-        sql = f"DROP SCHEMA IF EXISTS cycle{cycle} CASCADE; CREATE SCHEMA cycle{cycle};"
+        sql = f"DROP SCHEMA IF EXISTS cycle{self.cycle} CASCADE; CREATE SCHEMA cycle{self.cycle};"
         self.cur.execute(sql)
 
     def create_table(self, record: ArincRecord, cycle: str) -> None:
@@ -68,19 +88,11 @@ class PgConn(Configs):
         sql = f"INSERT INTO cycle{cycle}.{name} VALUES ({values_joined});"
         self.cur.execute(sql)
 
-
-class ArincParser(PgConn):
-    def initialize(self): 
-        '''Opens and reads the CIFP file. Gets cycle and creates schema.'''
-        self.connect()
-
-        with open(self.file) as file:
-            self.lines = file.readlines()
-
-        self.cycle = self.lines[0][35:39]
-        self.create_schema(self.cycle)
-
     def create_arinc_record(self, record_map):
+        '''
+        For a given ARINC record, parse data out of the main file and 
+        add it to the record's PostgreSQL database table.
+        '''
         record = ArincRecord(record_map)
 
         self.create_table(record, self.cycle)
@@ -100,8 +112,6 @@ class ArincParser(PgConn):
 
 def main():
     parser = ArincParser()
-
-    parser.initialize()
 
     for record in record_maps:
         parser.create_arinc_record(record)
