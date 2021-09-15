@@ -12,7 +12,6 @@ class ArincRecord:
         self.subsection_pos = record_map.get("subsection_pos")
         self.cont_rec_pos = record_map.get("cont_rec_pos")
         self.cont_rec_vals = record_map.get("cont_rec_vals")
-
         self.name = record_map.get("name")
         self.columns = record_map.get("columns")
         self.column_names = [c["name"] for c in record_map["columns"]]
@@ -45,21 +44,25 @@ class PgConn(Configs):
         self.cur = self.conn.cursor()
 
     def commit_and_close(self):
+        '''Commits changes and closes PostgreSQL connection.'''
         self.conn.commit()
         self.cur.close()
         self.conn.close()
 
     def create_schema(self, cycle: str) -> None:
+        '''Creates database schema for the given cycle. Drops existing schema.'''
         sql = f"DROP SCHEMA IF EXISTS cycle{cycle} CASCADE; CREATE SCHEMA cycle{cycle};"
         self.cur.execute(sql)
 
     def create_table(self, record: ArincRecord, cycle: str) -> None:
+        '''Creates a table in the PostgreSQL database for an ARINC record.'''
         sql = f"""DROP TABLE IF EXISTS cycle{cycle}.{record.name}; 
                 CREATE TABLE cycle{cycle}.{record.name} 
                 ({' varchar, '.join([c for c in record.column_names])} varchar);"""
         self.cur.execute(sql)
 
     def add_row(self, name: str, values: list, cycle: str) -> None:
+        '''Adds a row to its ARINC record PostgreSQL table.'''
         values = [v.replace("'", "''") for v in values]
         values_joined = ", ".join([f"'{v.rstrip()}'" for v in values])
         sql = f"INSERT INTO cycle{cycle}.{name} VALUES ({values_joined});"
@@ -68,6 +71,7 @@ class PgConn(Configs):
 
 class ArincParser(PgConn):
     def initialize(self): 
+        '''Opens and reads the CIFP file. Gets cycle and creates schema.'''
         self.connect()
 
         with open(self.file) as file:
