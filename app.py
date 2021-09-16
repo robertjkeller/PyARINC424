@@ -43,7 +43,7 @@ class ArincParser(Configs):
         self.lines = self.read_file()
         self.cycle = self.get_cycle()
 
-    def connect(self):
+    def connect(self) -> None:
         '''Establishes connection to PostgreSQL database.'''
         self.conn = psycopg2.connect(
             dbname=self.dbname,
@@ -54,16 +54,16 @@ class ArincParser(Configs):
         )
         self.cur = self.conn.cursor()
 
-    def read_file(self):
+    def read_file(self) -> str:
         '''Reads the CIFP/ARINC-424 formatted file.'''
         with open(self.file) as file:
             return file.readlines()
 
-    def get_cycle(self):
+    def get_cycle(self) -> str:
         '''Gets the file's AIRAC cycle for schema naming.'''
         return self.lines[0][35:39]
 
-    def commit_and_close(self):
+    def commit_and_close(self) -> None:
         '''Commits changes and closes PostgreSQL connection.'''
         self.conn.commit()
         self.cur.close()
@@ -88,7 +88,7 @@ class ArincParser(Configs):
         sql = f"INSERT INTO cycle{cycle}.{name} VALUES ({values_joined});"
         self.cur.execute(sql)
 
-    def create_arinc_record(self, record_map):
+    def create_arinc_record(self, record_map) -> None:
         '''
         For a given ARINC record, parse data out of the main file and 
         add it to the record's PostgreSQL database table.
