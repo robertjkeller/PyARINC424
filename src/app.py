@@ -45,6 +45,7 @@ class ArincParser(Configs):
 
     def connect(self) -> None:
         '''Establishes connection to PostgreSQL database.'''
+        # TODO: Context manager for connection.
         self.conn = psycopg2.connect(
             dbname=self.dbname,
             user=self.user,
