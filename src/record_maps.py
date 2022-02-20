@@ -795,7 +795,7 @@ record_maps = [
             {"id": 13, "start": 51, "end": 56, "name": "Runway_Gradient"},
             {"id": 14, "start": 60, "end": 66, "name": "LTP_Elipsoid_Height"},
             {"id": 15, "start": 66, "end": 71, "name": "Landing_Threshold_Elevation"},
-            {"id": 16, "start": 71, "end": 75, "name": "Displaced_Theshold"},
+            {"id": 16, "start": 71, "end": 75, "name": "Displaced_Threshold"},
             {"id": 17, "start": 75, "end": 77, "name": "TCH"},
             {"id": 18, "start": 77, "end": 80, "name": "Width"},
             {"id": 19, "start": 80, "end": 81, "name": "TCH_Value_Indicator"},
