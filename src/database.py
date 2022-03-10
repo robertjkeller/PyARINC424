@@ -22,4 +22,3 @@ class PostgresDb:
             cursor.close()
             conn.commit()
             conn.close()
-
