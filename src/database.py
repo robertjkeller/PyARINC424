@@ -1,6 +1,25 @@
 from contextlib import contextmanager
 import psycopg2
 import sqlite3
+from typing import Protocol, Generator
+from config import UserConfigs
+
+
+class DbConfig(Protocol):
+    def connect(self):
+        pass
+
+    def create_schema(self, schema_name: str) -> None:
+        pass
+
+    def create_table(
+        self, schema_name: str, table_name: str, columns: list[str]
+    ) -> None:
+        pass
+
+    def add_row(self, schema_name: str, table_name: str, values: list[str]) -> None:
+        pass
+
 
 class PostgresDb:
     def __init__(self, configs):
