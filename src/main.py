@@ -1,5 +1,5 @@
 from rich.progress import track
-from database import PostgresDb
+from database import get_db 
 from config import UserConfigs
 from record_maps import record_maps
 
@@ -21,11 +21,12 @@ class ArincRecord:
 
 
 class ArincParser:
-    def __init__(self, cursor, file=configs.file_loc):
-        self.cursor = cursor
+    def __init__(self, db, file=configs.file_loc):
+        self.db = db
         self.file = file
         self.lines = self.read_file()
         self.cycle = self.get_cycle()
+        self.schema = f"cycle{self.cycle}"
 
     def read_file(self) -> str:
         with open(self.file) as file:
@@ -40,23 +41,14 @@ class ArincParser:
         return self.lines[0][35:39]
 
     def create_schema(self) -> None:
-        sql = f"DROP SCHEMA IF EXISTS cycle{self.cycle} CASCADE; CREATE SCHEMA cycle{self.cycle};"
-        self.cursor.execute(sql)
+        self.db.create_schema(self.schema)
 
     def create_table(self, record: ArincRecord, cycle: str) -> None:
-        sql = f"""
-               DROP TABLE IF EXISTS cycle{cycle}.{record.name}; 
-               CREATE TABLE cycle{cycle}.{record.name} 
-               ({' varchar, '.join([c for c in record.column_names])} varchar);
-               """
-        self.cursor.execute(sql)
-
+        self.db.create_table(self.schema, record.name, record.column_names)
+        
     def add_row(self, name: str, values: list, cycle: str) -> None:
-        values = [v.replace("'", "''") for v in values]
-        values_joined = ", ".join([f"'{v.rstrip()}'" for v in values])
-        sql = f"INSERT INTO cycle{cycle}.{name} VALUES ({values_joined});"
-        self.cursor.execute(sql)
-
+        self.db.add_row(self.schema, name, values)
+        
     def create_arinc_record(self, record_map) -> None:
         record = ArincRecord(record_map)
 
@@ -76,8 +68,10 @@ class ArincParser:
 
 
 def main():
-    with PostgresDb(configs).connect() as cursor:
-        parser = ArincParser(cursor)
+    db = get_db(configs)
+
+    with db.connect():
+        parser = ArincParser(db)
         parser.parse()
 
 
