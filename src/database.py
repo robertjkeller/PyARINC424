@@ -58,6 +58,8 @@ class SqliteDb:
             conn.close()
 
     def create_schema(self, _):
+        # SQLite does not support schemas in the same way as PostgreSQL.
+        # This method is intentionally a no-op.
         pass
 
     def create_table(self, _, table_name, columns):
