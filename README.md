@@ -22,14 +22,27 @@ PyARINC424 is a tool that parses an [ARINC-424](https://en.wikipedia.org/wiki/AR
 - Grid MORA (AS)
 
 ## Config File
-A `config.ini` file must be created in the application `src` directory. This configuration file should contain the following:
+A `config.ini` file must be created in the application `src` directory. 
+
+The config can be set up for *either* PostgreSQL or SQLite.
+
+A PostgreSQL configuration file should contain the following:
 ```
 [postgres]
-dbname =    # your database name
+dbname =    # your database name (must already exist)
 user =      # your postgres username
 password =  # your postgres password
 host =      # your host, e.g. localhost
 port =      # your postgres port, e.g. 5432
+
+[cifp_file]
+file_loc =  # your ARINC file location
+```
+
+A SQLite configuration file should contain the following:
+```
+[sqlite]
+dbname =    # your output SQlite db file name
 
 [cifp_file]
 file_loc =  # your ARINC file location
