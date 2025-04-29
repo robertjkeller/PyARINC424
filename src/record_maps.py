@@ -1,6 +1,6 @@
 # Store of mappings of each ARINC-424 record in FAA CIFP output.
 
-record_maps = [
+record_maps = [  # pragma: no cover
     {
         "name": "airport",
         "section_code": "P",
@@ -648,8 +648,18 @@ record_maps = [
             {"id": 11, "start": 27, "end": 28, "name": "Route_Indicator"},
             {"id": 12, "start": 28, "end": 30, "name": "SBAS_Service_Provider"},
             {"id": 13, "start": 30, "end": 32, "name": "Reference_Path_Data_Selector"},
-            {"id": 14, "start": 32, "end": 36, "name": "Reference_Path_Data_Identifier"},
-            {"id": 15, "start": 36, "end": 37, "name": "Approach_Performance_Designator"},
+            {
+                "id": 14,
+                "start": 32,
+                "end": 36,
+                "name": "Reference_Path_Data_Identifier",
+            },
+            {
+                "id": 15,
+                "start": 36,
+                "end": 37,
+                "name": "Approach_Performance_Designator",
+            },
             {"id": 16, "start": 37, "end": 48, "name": "LTP_Latitude"},
             {"id": 17, "start": 48, "end": 60, "name": "LTP_Longitude"},
             {"id": 18, "start": 60, "end": 66, "name": "LTP_Ellipsoid_Height"},
@@ -802,7 +812,12 @@ record_maps = [
             {"id": 20, "start": 81, "end": 85, "name": "LOC__MLS__GLS_Identifier"},
             {"id": 21, "start": 85, "end": 86, "name": "Category__Class"},
             {"id": 22, "start": 86, "end": 90, "name": "Stopway"},
-            {"id": 23, "start": 90, "end": 94, "name": "Secondary_LOC_MLS_GLS_Identifier"},
+            {
+                "id": 23,
+                "start": 90,
+                "end": 94,
+                "name": "Secondary_LOC_MLS_GLS_Identifier",
+            },
             {"id": 24, "start": 94, "end": 95, "name": "Category__Class_2"},
             {"id": 25, "start": 101, "end": 123, "name": "Runway_Description"},
             {"id": 26, "start": 123, "end": 128, "name": "File_Record_Number"},
