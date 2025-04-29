@@ -1,3 +1,5 @@
+[![Python Tests](https://github.com/robertjkeller/PyARINC424/actions/workflows/python-tests.yml/badge.svg)](https://github.com/robertjkeller/PyARINC424/actions/workflows/python-tests.yml)
+
 # PyARINC424
 
 ## About
