@@ -42,7 +42,7 @@ file_loc =  # your ARINC file location
 A SQLite configuration file should contain the following:
 ```
 [sqlite]
-dbname =    # your output SQlite db file name
+dbname =    # your output SQLite db file name
 
 [cifp_file]
 file_loc =  # your ARINC file location
