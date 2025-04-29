@@ -5,7 +5,7 @@ from typing import Protocol, Generator
 from config import UserConfigs
 
 
-class DbConfig(Protocol):
+class DbConfig(Protocol):  # pragma: no cover
     def connect(self):
         pass
 
@@ -81,7 +81,7 @@ class SqliteDb:
             conn.commit()
             conn.close()
 
-    def create_schema(self, _) -> None:
+    def create_schema(self, _) -> None:  # pragma: no cover
         # SQLite does not support schemas in the same way as PostgreSQL.
         # This method is intentionally a no-op.
         pass

@@ -19,9 +19,6 @@ class UserConfigs:
             self.dbtype = "sqlite"
             self.dbname = parser["sqlite"]["dbname"]
 
-        if not parser.has_section("cifp_file"):
-            raise ValueError("No cifp_file configuration found in config.ini")
-
         self.file_loc = parser["cifp_file"]["file_loc"]
 
 
