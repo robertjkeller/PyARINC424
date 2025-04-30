@@ -37,6 +37,7 @@ htmlcov/
 .tox/
 coverage.xml
 *.cover
+reports/
 
 # IDE specific files
 .idea/
