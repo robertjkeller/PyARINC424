@@ -1,4 +1,4 @@
-[![Tests](https://github.com/robertjkeller/PyARINC424/actions/workflows/python-tests.yml/badge.svg)](https://github.com/robertjkeller/PyARINC424/actions/workflows/python-tests.yml)
+[![Tests](https://github.com/robertjkeller/PyARINC424/actions/workflows/python-tests.yml/badge.svg)](https://github.com/robertjkeller/PyARINC424/actions/workflows/python-tests.yml) ![Coverage Status](./assets/badges/coverage-badge.svg?dummy=8484744)
 
 # PyARINC424
 
