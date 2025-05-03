@@ -24,7 +24,11 @@ PyARINC424 is a tool that parses an [ARINC-424](https://en.wikipedia.org/wiki/AR
 - Grid MORA (AS)
 
 ## Config File
-A `config.ini` file must be created in the application `src` directory. 
+By default, the program looks for a `config.ini` file in the application `src` directory.
+You can specify a different config path by passing it as an argument:
+```sh
+python main.py /path/to/my_config.ini
+```
 
 The config can be set up for *either* PostgreSQL or SQLite.
 
