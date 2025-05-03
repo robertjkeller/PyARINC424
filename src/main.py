@@ -1,10 +1,14 @@
 from arinc import ArincParser
 from config import UserConfigs
 from database import DbConfig, get_db
+import sys
 
 
 def main() -> None:
-    configs: UserConfigs = UserConfigs()
+    if len(sys.argv) > 1:
+        kwargs = {"config_file": sys.argv[1]}
+
+    configs: UserConfigs = UserConfigs(**kwargs)
 
     db: DbConfig = get_db(configs)
 
