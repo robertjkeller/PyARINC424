@@ -1,6 +1,7 @@
 [project]
 name = "pyarinc424"
-version = "0.1.0"
+dynamic = ["version"]
+description = "Python library for parsing ARINC 424 data"
 requires-python = ">=3.11"
 dependencies = [
     "psycopg2-binary>=2.9.10",
@@ -18,3 +19,12 @@ dev = [
 pythonpath = [
   "src"
 ]
+
+[build-system]
+requires = [
+    "setuptools>=61.0",
+    "setuptools-scm>=8"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
