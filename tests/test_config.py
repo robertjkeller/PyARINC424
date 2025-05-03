@@ -177,3 +177,11 @@ class TestUserConfigs:
                 ValueError, match="Missing required PostgreSQL configuration"
             ):
                 UserConfigs()
+
+    @mock.patch("configparser.ConfigParser.read", return_value=[])
+    def test_file_not_found(self, mock_read):
+        """Test __init__ fails when the config file is not found."""
+        with pytest.raises(
+            FileNotFoundError, match="Configuration file missing.ini not found"
+        ):
+            UserConfigs("missing.ini")
