@@ -2,9 +2,13 @@ import configparser
 
 
 class UserConfigs:
-    def __init__(self):
+    def __init__(self, config_file: str = "config.ini"):
         parser = configparser.ConfigParser()
-        parser.read("config.ini")
+        read = parser.read(config_file)
+
+        if not read:
+            raise FileNotFoundError(f"Configuration file {config_file} not found")
+
         validate(parser)
 
         if parser.has_section("postgres"):
