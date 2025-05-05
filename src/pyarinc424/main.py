@@ -7,6 +7,8 @@ import sys
 def main() -> None:
     if len(sys.argv) > 1:
         kwargs = {"config_file": sys.argv[1]}
+    else:
+        kwargs = {}
 
     configs: UserConfigs = UserConfigs(**kwargs)
 
