@@ -1,7 +1,7 @@
 import os
 import tempfile
 
-import arinc  # type: ignore
+from pyarinc424 import arinc  # type: ignore
 
 
 class MockDbConfig:
