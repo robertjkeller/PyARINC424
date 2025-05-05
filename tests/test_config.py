@@ -1,7 +1,7 @@
 import pytest
 from unittest import mock
 import configparser
-from config import UserConfigs, validate  # type: ignore
+from pyarinc424.config import UserConfigs, validate  # type: ignore
 
 
 class TestValidate:

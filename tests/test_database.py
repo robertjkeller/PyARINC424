@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import MagicMock, patch
-from database import PostgresDb, SqliteDb, get_db  # type: ignore
+from pyarinc424.database import PostgresDb, SqliteDb, get_db  # type: ignore
 
 
 class MockConfigs:

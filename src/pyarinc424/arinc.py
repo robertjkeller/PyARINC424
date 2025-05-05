@@ -1,6 +1,6 @@
 from rich.progress import track
-from .database import DbConfig
-from .record_maps import record_maps
+from pyarinc424.database import DbConfig
+from pyarinc424.record_maps import record_maps
 
 
 class ArincRecord:

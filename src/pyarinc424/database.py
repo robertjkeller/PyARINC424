@@ -2,7 +2,7 @@ from contextlib import contextmanager
 import psycopg2  # type: ignore
 import sqlite3
 from typing import Protocol, Generator
-from .config import UserConfigs
+from pyarinc424.config import UserConfigs
 
 
 class DbConfig(Protocol):  # pragma: no cover

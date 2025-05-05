@@ -20,7 +20,7 @@ dev = [
 
 [tool.pytest.ini_options]
 pythonpath = [
-  "src"
+  "src/pyarinc424",
 ]
 
 [build-system]

@@ -1,6 +1,6 @@
-from .arinc import ArincParser
-from .config import UserConfigs
-from .database import DbConfig, get_db
+from pyarinc424.arinc import ArincParser
+from pyarinc424.config import UserConfigs
+from pyarinc424.database import DbConfig, get_db
 import sys
 
 
