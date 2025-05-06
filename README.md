@@ -23,11 +23,26 @@ PyARINC424 is a tool that parses an [ARINC-424](https://en.wikipedia.org/wiki/AR
 - Special Use Airspace, Primary and Continuation (UR)
 - Grid MORA (AS)
 
+## Installation
+PyARINC424 can be installed from PyPI using `pip`:
+```sh
+pip install pyarinc424
+```
+
+If using `uv`, `pyarinc424` can be installed as a tool and executed globally:
+```sh
+# Add as tool
+uv tool install pyarinc424
+
+# Usage
+pyarinc424 my_config.ini
+```
+
 ## Config File
 By default, the program looks for a `config.ini` file in the application `src` directory.
 You can specify a different config path by passing it as an argument:
 ```sh
-python main.py /path/to/my_config.ini
+pyarinc424 /path/to/my_config.ini
 ```
 
 The config can be set up for *either* PostgreSQL or SQLite.
