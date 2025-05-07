@@ -1,6 +1,7 @@
 import pytest
 from unittest import mock
 import configparser
+import os
 from pyarinc424.config import UserConfigs, validate  # type: ignore
 
 
@@ -185,3 +186,27 @@ class TestUserConfigs:
             FileNotFoundError, match="Configuration file missing.ini not found"
         ):
             UserConfigs("missing.ini")
+
+
+class TestUserConfigsRelativeFileLoc:
+    def test_relative_file_loc_conversion(self, tmp_path):
+        """Test that a relative file_loc in the configuration is converted to an absolute path."""
+        config_content = """
+            [postgres]
+            dbname = testdb
+            user = testuser
+            password = testpass
+            host = localhost
+            port = 5432
+
+            [cifp_file]
+            file_loc = relative/path/to/file
+        """
+        config_file = tmp_path / "config.ini"
+        config_file.write_text(config_content.strip())
+
+        user_configs = UserConfigs(str(config_file))
+        expected_path = os.path.abspath(
+            os.path.join(os.path.dirname(str(config_file)), "relative/path/to/file")
+        )
+        assert user_configs.file_loc == expected_path
