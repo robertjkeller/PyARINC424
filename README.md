@@ -4,7 +4,7 @@
 
 ## About
 
-PyARINC424 is a tool that parses an [ARINC-424](https://en.wikipedia.org/wiki/ARINC_424) formatted data file into a PostreSQL database. PyARINC424 supports the tables/records that are currently output in [FAA CIFP](https://www.faa.gov/air_traffic/flight_info/aeronav/digital_products/cifp/download/):
+PyARINC424 is a tool that parses an [ARINC-424](https://en.wikipedia.org/wiki/ARINC_424) formatted data file into a SQLite or PostreSQL database. PyARINC424 supports the tables/records that are currently output in [FAA CIFP](https://www.faa.gov/air_traffic/flight_info/aeronav/digital_products/cifp/download/):
 - Airports and heliports (PA and HA)
 - Runways (PG)
 - VHF Navaids (D)
