@@ -1,4 +1,5 @@
 import configparser
+import os
 
 
 class UserConfigs:
@@ -24,6 +25,12 @@ class UserConfigs:
             self.dbname = parser["sqlite"]["dbname"]
 
         self.file_loc = parser["cifp_file"]["file_loc"]
+
+        # if the file_loc path is not absolute, make it absolute and relative to the config file
+        if not self.file_loc.startswith("/"):
+            self.file_loc = os.path.abspath(
+                os.path.join(os.path.dirname(config_file), self.file_loc)
+            )
 
 
 def validate(parser: configparser.ConfigParser) -> None:
